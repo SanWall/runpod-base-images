@@ -1,6 +1,37 @@
 #!/usr/bin/env bash
-apt update
-apt -y upgrade
+
+#!/usr/bin/env bash
+set -e  # Exit immediately if a command exits with a non-zero status
+
+# Update package list and install gnupg if not already installed
+apt-get update && apt-get install -y gnupg wget
+echo "   >>>>>> Installed gnupg and wget"
+
+# Add NVIDIA GPG key to avoid signature issues
+if ! apt-key list | grep -q "NVIDIA CORPORATION"; then
+    echo "Adding NVIDIA GPG key..."
+    wget -qO- https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/3bf863cc.pub | apt-key add -
+else
+    echo "NVIDIA GPG key already added."
+fi
+
+# Fix Ubuntu repository keys
+if ! apt-key list | grep -q "Ubuntu Archive Automatic Signing Key"; then
+    echo "Fixing Ubuntu repository keys..."
+    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 3B4FE6ACC0B21F32
+    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 871920D1991BC93C
+else
+    echo "Ubuntu keys already added."
+fi
+
+# Update and upgrade packages
+apt-get update && apt-get -y upgrade
+echo "   >>>>>> Updated and upgraded packages"
+
+
+
+# apt update
+# apt -y upgrade
 apt install -y --no-install-recommends \
     build-essential \
     software-properties-common \
@@ -64,10 +95,21 @@ if [ -n "${PYTHON_VERSION}" ]; then
         "python${PYTHON_VERSION}-tk"
 
     # Link Python
-    rm /usr/bin/python
-    ln -s /usr/bin/python${PYTHON_VERSION} /usr/bin/python
-    rm /usr/bin/python3
-    ln -s /usr/bin/python${PYTHON_VERSION} /usr/bin/python3
+    # rm /usr/bin/python
+    # ln -s /usr/bin/python${PYTHON_VERSION} /usr/bin/python
+    # rm /usr/bin/python3
+    # ln -s /usr/bin/python${PYTHON_VERSION} /usr/bin/python3
+
+    # Link Python
+    if [ -f /usr/bin/python ]; then
+        rm /usr/bin/python
+    fi
+    ln -sf /usr/bin/python${PYTHON_VERSION} /usr/bin/python
+
+    if [ -f /usr/bin/python3 ]; then
+        rm /usr/bin/python3
+    fi
+    ln -sf /usr/bin/python${PYTHON_VERSION} /usr/bin/python3
 
     # Upgrade pip
     pip3 install --upgrade --no-cache-dir pip

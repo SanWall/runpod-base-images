@@ -3,11 +3,11 @@ variable "REGISTRY" {
 }
 
 variable "REGISTRY_USER" {
-    default = "ashleykza"
+    default = "sanwall"
 }
 
 variable "RELEASE" {
-    default = "2.2.3"
+    default = "1.0.0"
 }
 
 variable "RUNPODCTL_VERSION" {

@@ -1,6 +1,7 @@
 # Stage 1: Base
-ARG BASE_IMAGE
+ARG BASE_IMAGE=latest
 FROM ${BASE_IMAGE} AS base
+ARG BASE_IMAGE
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 ENV DEBIAN_FRONTEND=noninteractive \
